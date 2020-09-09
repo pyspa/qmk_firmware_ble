@@ -41,6 +41,9 @@ enum custom_keycodes {
     ENT_SLP,              /* Deep sleep mode                      */
     LOWER,                /* Layer  keycode                       */
     RAISE,                /* Layer  keycode                       */
+    QWERTY,
+    COLEMAK,
+    EUCALYN,
 };
 
 
@@ -48,6 +51,8 @@ extern keymap_config_t keymap_config;
 
 enum {
   _QWERTY,
+  _COLEMAK,
+  _EUCALYN,
   _LOWER,
   _RAISE,
   _ADJUST,
@@ -68,6 +73,30 @@ const uint16_t keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_LCTL, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_LPRN,        KC_RPRN, KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, \
  //|--------+--------+--------+--------+--------+--------+--------|      |--------+--------+--------+--------+--------+--------+--------|
     KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_LBRC,        KC_RBRC, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT, \
+ //|--------+--------+--------+--------+--------+--------+--------|      |--------+--------+--------+--------+--------+--------+--------|
+                               ADJUST,  KC_LGUI, RAISE,   LOWER,          KC_ENT,  KC_SPC,  KC_RALT, KC_DEL \
+ //                           +--------+--------+--------+--------+      +--------+--------+--------+--------+
+  ),
+
+  [_COLEMAK] = LAYOUT(
+ //+--------+--------+--------+--------+--------+--------+                        +--------+--------+--------+--------+--------+--------+
+    KC_TAB,  KC_Q,    KC_W,    KC_F,    KC_P,    KC_G,                             KC_J,    KC_L,    KC_U,    KC_Y,    KC_SCLN, KC_BSPC,  \
+ //|--------+--------+--------+--------+--------+--------+--------+      +--------+--------+--------+--------+--------+--------+--------|
+    KC_LCTL, KC_A,    KC_R,    KC_S,    KC_T,    KC_D,    KC_LPRN,        KC_RPRN, KC_H,    KC_N,    KC_E,    KC_I,    KC_O,    KC_QUOT, \
+ //|--------+--------+--------+--------+--------+--------+--------|      |--------+--------+--------+--------+--------+--------+--------|
+    KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_LBRC,        KC_RBRC, KC_K,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT, \
+ //|--------+--------+--------+--------+--------+--------+--------|      |--------+--------+--------+--------+--------+--------+--------|
+                               ADJUST,  KC_LGUI, RAISE,   LOWER,          KC_ENT,  KC_SPC,  KC_RALT, KC_DEL \
+ //                           +--------+--------+--------+--------+      +--------+--------+--------+--------+
+  ),
+
+  [_EUCALYN] = LAYOUT(
+ //+--------+--------+--------+--------+--------+--------+                        +--------+--------+--------+--------+--------+--------+
+    KC_TAB,  KC_Q,    KC_W,    KC_COMM, KC_DOT,  KC_SCLN,                          KC_M,    KC_R,    KC_D,    KC_Y,    KC_P,    KC_BSPC,  \
+ //|--------+--------+--------+--------+--------+--------+--------+      +--------+--------+--------+--------+--------+--------+--------|
+    KC_LCTL, KC_A,    KC_O,    KC_E,    KC_I,    KC_I,    KC_LPRN,        KC_RPRN, KC_G,    KC_T,    KC_K,    KC_S,    KC_N,    KC_QUOT, \
+ //|--------+--------+--------+--------+--------+--------+--------|      |--------+--------+--------+--------+--------+--------+--------|
+    KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_F,    KC_LBRC,        KC_RBRC, KC_B,    KC_H,    KC_J,    KC_L,    KC_SLSH, KC_RSFT, \
  //|--------+--------+--------+--------+--------+--------+--------|      |--------+--------+--------+--------+--------+--------+--------|
                                ADJUST,  KC_LGUI, RAISE,   LOWER,          KC_ENT,  KC_SPC,  KC_RALT, KC_DEL \
  //                           +--------+--------+--------+--------+      +--------+--------+--------+--------+
@@ -101,7 +130,7 @@ const uint16_t keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  //+--------+--------+--------+--------+--------+--------+                        +--------+--------+--------+--------+--------+--------+
     _______, AD_WO_L, ADV_ID1, ADV_ID2, ADV_ID3, ADV_ID4,                          XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
  //|--------+--------+--------+--------+--------+--------+--------+      +--------+--------+--------+--------+--------+--------+--------|
-    _______, DELBNDS, DEL_ID1, DEL_ID2, DEL_ID3, DEL_ID4, XXXXXXX,         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
+    _______, DELBNDS, DEL_ID1, DEL_ID2, DEL_ID3, DEL_ID4, XXXXXXX,        XXXXXXX, QWERTY,  COLEMAK, EUCALYN, XXXXXXX, XXXXXXX, XXXXXXX, \
  //|--------+--------+--------+--------+--------+--------+--------|      |--------+--------+--------+--------+--------+--------+--------|
     _______, BATT_LV, ENT_SLP, ENT_DFU, RESET,   XXXXXXX, XXXXXXX,        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
  //|--------+--------+--------+--------+--------+--------+--------|      |--------+--------+--------+--------+--------+--------+--------|
@@ -109,6 +138,11 @@ const uint16_t keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  //                           +--------+--------+--------+--------+      +--------+--------+--------+--------+
   )
 };
+
+void persistent_defaul_layer_set(uint16_t default_layer) {
+  eeconfig_update_default_layer(default_layer);
+  default_layer_set(default_layer);
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   char str[16];
@@ -136,6 +170,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
   if (record->event.pressed) {
     switch (keycode) {
+    case QWERTY:
+      persistent_defaul_layer_set(1UL<<_QWERTY);
+      return false;
+    case COLEMAK:
+      persistent_defaul_layer_set(1UL<<_COLEMAK);
+      return false;
+    case EUCALYN:
+      persistent_defaul_layer_set(1UL<<_EUCALYN);
+      return false;
     case DELBNDS:
       delete_bonds();
       return false;
